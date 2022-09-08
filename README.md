@@ -17,7 +17,7 @@
    1. Limit Azure AD application's permission to intended target mailboxes
 
 ## Links
-- [Azure automation runbook](https://docs.microsoft.com/en-us/azure/automation/quickstarts/create-account-portal)
+- [Azure automation runbook](https://docs.microsoft.com/en-us/azure/automation/quickstarts/create-azure-automation-account-portal)
 - [Azure key vault](https://docs.microsoft.com/en-us/azure/key-vault/general/quick-create-portal)
 - [Azure AD application](https://docs.microsoft.com/en-us/azure/active-directory/develop/quickstart-register-app)
 - [Exchange Online app-only authentication](https://docs.microsoft.com/en-us/powershell/exchange/app-only-auth-powershell-v2?view=exchange-ps)
