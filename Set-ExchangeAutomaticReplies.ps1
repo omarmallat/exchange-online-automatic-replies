@@ -2,14 +2,32 @@
 param ([Parameter(Mandatory=$true)]
         [string]$credentialName,
         [Parameter(Mandatory=$true)]
+        [string]$directoryName,
+        [Parameter(Mandatory=$true)]
+        [string]$applicationID,
+        [Parameter(Mandatory=$true)]
+        [string]$subscriptionID,
+        [Parameter(Mandatory=$true)]
+        [string]$keyVaultName,
+        [Parameter(Mandatory=$true)]
+        [string]$certificateName,
+        [Parameter(Mandatory=$true)]
         [string]$mailSource,
         [Parameter(Mandatory=$true)]
         [string]$mailTarget,
         [Parameter(Mandatory=$true)]
         [string]$mailBody)
 
+# Connect to Azure
+Connect-AzAccount -Identity -Subscription $subscriptionID | Out-Null
+# Get certificate from Azure
+$azCertSecret = Get-AzKeyVaultSecret -VaultName $keyVaultName -Name $certificateName -AsPlainText
+$azCertSecretByte = [Convert]::FromBase64String($azCertSecret)
+$x509Cert = [System.Security.Cryptography.X509Certificates.X509Certificate2]::new($azCertSecretByte)
+# Connect to Azure AD, needs rework for certificate authentication once available
 Connect-AzureAD -Credential (Get-AutomationPSCredential -Name $credentialName) | Out-Null
-Connect-ExchangeOnline -Credential (Get-AutomationPSCredential -Name $credentialName) -CommandName 'Get-MailboxFolderPermission','Get-MailboxFolderStatistics','Set-MailboxAutoReplyConfiguration' | Out-Null
+# Connect to Exchange Online
+Connect-ExchangeOnline -Certificate $x509Cert -AppID $applicationID -Organization $directoryName -CommandName 'Get-MailboxFolderPermission','Get-MailboxFolderStatistics','Set-MailboxAutoReplyConfiguration' | Out-Null
 
 #region: Input
 if ($mailTarget.Contains('@'))
